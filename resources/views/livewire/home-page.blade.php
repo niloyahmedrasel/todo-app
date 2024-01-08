@@ -1,162 +1,91 @@
-<div>
-
-    @if (Auth::check())
-        <div class="row m-2">
-            <div class="col-4">
-                <!-- Task group display -->
-                <table class="table border">
-                    <thead>
-                        <tr>
-                            <th>Tasks Group</th>
-                            <th>Is It Urgent?</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-
-                        @foreach ($task_gps as $task_gp)
-                            <tr>
-                                <td>{{ $task_gp->task_gp_name ?? '' }}</td>
-                                <td>{{ $task_gp->is_task_gp_urgent ?? '' }}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-                <form wire:submit="taskGroupCreate">
-                    <form wire:submit="taskGroupCreate">
-                        <div class="col-9">
-                            <label for="">Task Group</label>
-                            <input wire:model="task_gp_name" class="form-control" type="text">
-                            @error('task_gp_name')
-                                <strong class="text-danger">{{ $message }}</strong>
-                            @enderror
-                        </div>
-                        <div class="form-check form-switch">
-                            <label for="">Is Task Group Urgent?</label>
-                            <input class="form-check-input" wire:model="is_task_gp_urgent" type="checkbox"
-                                id="flexSwitchCheckDefault">
-                        </div>
-                        <button class="btn"> New+</button>
-                    </form>
-                </form>
+<div class="flex flex-col lg:flex-row h-screen border">
+  
+  <div class="drawer lg:drawer-open w-full lg:w-80">
+    <div class="drawer-content">
+      <div class="drawer-side">
+        <label for="my-drawer-2" aria-label="close sidebar" class="drawer-overlay"></label>
+        <ul class="menu p-4 min-h-full bg-base-200 text-base-content">
+          
+          <div>
+            <h1 class="text-xl font-bold">Welcome John Doe</h1>
+            <div class="mt-20">
+              <h1 class="text-sm text-[#ADACB0]">Tasks Group</h1>
+              <h1 class="mt-2 text-sm hover:text-blue-900 font-semibold cursor-pointer">Urgent Tasks</h1>
+              <h1 class="mt-2 text-sm hover:text-blue-900 font-semibold cursor-pointer">Social</h1>
+              <h1 class="mt-2 text-sm hover:text-blue-900 font-semibold cursor-pointer">Files</h1>
+              <h1 class="mt-2 text-sm hover:text-blue-900 font-semibold cursor-pointer">Invoices</h1>
+              <h1 class="mt-2 text-sm hover:text-blue-900 font-semibold cursor-pointer">Forms</h1>
+              <button class="btn btn-outline">+ New group</button>
             </div>
-            <div class="col-8">
-                <div class="col-3 mb-3">
-                    <label for="">Panding({{ count($panding_works) }})
-                        DoneTask({{ count($done_works) }})</label>
-                </div>
-                <div class="col-3 mb-3">
-                    <input type="search" placeholder="search" class="form-control" wire:model.live="taskSearch">
-                </div>
-                <table class="table border">
-                    <thead>
-                        <tr>
-                            <th>Task Status</th>
-                            <th>Tasks Title</th>
-                            <th>Tasks Des</th>
-                            <th>Is Urgrent</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+          </div>
+        </ul>
+      </div>
+    </div>
+  </div>
 
-                        @foreach ($tasks as $task)
-                            <tr>
-                                <td>
-                                    @if ($task->is_complete == 'yes')
-                                        <input type="checkbox" checked
-                                            wire:click="taskStatusUpdate({{ $task->id }})">
-                                    @else
-                                        <input type="checkbox" wire:click="taskStatusUpdate({{ $task->id }})">
-                                    @endif
+  
+  <div class="flex flex-col lg:flex-grow items-start justify-start p-4 bg-gray-100">
+    <div class="flex justify-between w-full mb-4 lg:mb-0 group relative">
+      
+      <div class="flex items-center">
+        <h1 class="text-lg font-semibold mr-4">Social</h1>
+        
+      </div>
 
-                                </td>
-                                <td>{{ $task->task_title ?? '' }}</td>
-                                <td>{{ $task->task_des ?? '' }}</td>
-                                <td>{{ $task->is_task_urgent ?? '' }}</td>
-                                <td>
-                                    <button wire:click="deleteTaskCreate({{ $task->id }})">Delete</button>
-                                    <button wire:click="editTaskCreate({{ $task->id }})">Edit</button>
-                                </td>
-                                @if ($taskEditingId == $task->id)
-                                        <div class="col-9">
-                                            <label for="task_gp">Create Task:</label>
-                                            <select wire:model="up_task_gp_id" class="form-control" name="task_gp"
-                                                id="task_gp">
-                                                @foreach ($task_gps as $task_gp)
-                                                    <option {{ $task->task_gp_id == $task_gp->id ? 'selected' : '' }}
-                                                        value="{{ $task_gp->id }}">{{ $task_gp->task_gp_name }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div class="col-9">
-                                            <label for="task_title">Task Title</label>
-                                            <input wire:model="up_task_title" class="form-control"
-                                                value="{{ $task->task_title }}" type="text" id="task_title"
-                                                name="task_title">
-                                            @error('up_task_title')
-                                                <strong class="text-danger">{{ $message }}</strong>
-                                            @enderror
-                                        </div>
-                                        <div class="col-9">
-                                            <label for="task_des">Task Description</label>
-                                            <textarea wire:model="up_task_des" id="task_des" name="task_des" class="form-control" rows="3">{{ $task->task_des }}</textarea>
-                                            @error('up_task_des')
-                                                <strong class="text-danger">{{ $message }}</strong>
-                                            @enderror
-                                        </div>
-                                        <div class="form-check form-switch">
-                                            <label for="is_task_urgent">Is Task Urgent?</label>
-                                            <input class="form-check-input" wire:model="up_is_task_urgent"
-                                                type="checkbox" id="is_task_urgent" name="is_task_urgent">
-                                        </div>
-                                        <button wire:click="updatetaskCreate({{$task->id}})" class="btn">Update</button>
-                                @endif
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-                <form wire:submit="taskCreate">
-                    <div class="col-9">
-                        <label for="">Update Task:</label>
-                        <select wire:model="task_gp_id" class="form-control" name="" id="">
-                            @foreach ($task_gps as $task_gp)
-                                <option value="{{ $task_gp->id }}">{{ $task_gp->task_gp_name }}</option>
-                            @endforeach
-                        </select>
-
-                    </div>
-                    <div class="col-9">
-                        <label for="">Task Title</label>
-                        <input wire:model="task_title" class="form-control" type="text">
-                        @error('task_title')
-                            <strong class="text-danger">{{ $message }}</strong>
-                        @enderror
-                    </div>
-                    <div class="col-9">
-                        <label for="">Task Description</label>
-                        <textarea wire:model="task_des" name="" id="" class="form-control" rows="3"></textarea>
-                        @error('task_des')
-                            <strong class="text-danger">{{ $message }}</strong>
-                        @enderror
-                    </div>
-                    <div class="form-check form-switch">
-                        <label for="">Is Task Urgent?</label>
-                        <input class="form-check-input" wire:model="is_task_urgent" type="checkbox"
-                            id="flexSwitchCheckDefault">
-                    </div>
-                    <button class="btn"> New+</button>
-                </form>
-            </div>
+      
+      <div class="flex items-center space-x-4">
+        <h1>Search</h1>
+        <h1>Image</h1>
+      </div>
+    </div>
+    <div class="flex mt-5 group-hover:border-blue-500">
+      <button class="btn btn-outline mr-2">To do</button>
+      <button class="btn active:btn-outline-blue-500">
+        <span class="bg-[#1751D0] p-[3px] text-white m-1">44</span> Done
+      </button>
+      <div class="ml-auto flex space-x-2 opacity-0 group-hover:opacity-100">
+        <button class="btn btn-outline-blue-500">Edit</button>
+        <button class="btn btn-outline-blue-500">Delete</button>
+      </div>
+    </div>
+    <h1 class="text-sm text-[#ADACB0] mt-10">Tasks </h1>
+    <div class="mt-5 flex items-center border-b pb-5 group-hover:border-blue-500">
+      <input type="checkbox" class="checkbox" />
+      <div class="flex flex-col lg:flex-row items-center">
+        <div class="lg:w-1/2 ml-4">
+          <div class="flex items-center">
+            <h1 class="text-lg font-bold lg:w-3/4">Update user flows with UX feedback from Session #245</h1>
+            <button class="btn bg-[#ADACB0] text-xs ml-1">Group name</button>
+          </div>
+          <input type="text" placeholder="Here Task Description" class="input input-bordered w-full mt-2 max-w-xs lg:max-w-full" />
         </div>
-    @else
-        <div class="row m-2">
-            <div class="col-4">
-                <p>Please log in to access the content.</p>
-            </div>
-            <div class="col-8">
-                Welcome To Todo App
-            </div>
+        <div class="lg:w-1/2 mt-4 lg:mt-0 lg:ml-auto flex space-x-2 opacity-0 lg:group-hover:opacity-100">
+          <button class="btn btn-outline-blue-500">Edit</button>
+          <button class="btn btn-outline-blue-500">Delete</button>
         </div>
-    @endif
+      </div>
+    </div>
+    <div class="mt-4 lg:flex items-center">
+      <input type="text" placeholder="New Task" class="input input-bordered m-2 w-full lg:w-1/4" />
+      <select class="select select-bordered join-item lg:mr-2">
+        <option disabled selected>Select Group</option>
+        <option>Group 1</option>
+        <option>Group 2</option>
+        <option>Group 3</option>
+        <option>Group 4</option>
+        <option>Group 5</option>
+        <option>Group 6</option>
+      </select>
+      <div class="flex items-center">
+        <button class="btn border">Urgent</button>
+        <button class="btn btn-red" disabled>Urgent</button>
+        <div class="relative inline-block w-6 ml-2 select-none transition transform duration-200 ease-in">
+          <input type="checkbox" id="toggle" name="toggle" class="toggle-checkbox absolute block w-4 h-4 rounded-full bg-white border-2 appearance-none cursor-pointer" />
+          <label for="toggle" class="toggle-label block overflow-hidden h-4 rounded-full bg-gray-300 border cursor-pointer"></label>
+        </div>
+        <button class="btn btn-active btn-primary">Create Task</button>
+      </div>
+    </div>
+    
+  </div>
 </div>
